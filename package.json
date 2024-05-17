@@ -17,5 +17,9 @@
     "vue": "^3.4.27",
     "vue-router": "^4.3.2",
     "vuetify": "^3.6.0-beta.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vue-tsc": "^1.8.27"
   }
 }
