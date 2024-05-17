@@ -6,13 +6,20 @@
   <div>
     <h3>Buscar Servidor por:</h3>
   </div><br>
+  <v-select v-model="inputMethod" :items="method" :rules="[v => !!v || 'Item is required']" label="Item"
+    required></v-select>
+  <div>
+    <v-select v-model="inputMethod" :items="method" item-value="value" item-title="text" label="Selecionar"
+      required></v-select>
+  </div>
 
   <section>
     <v-sheet class="mx-auto" width="500">
       <v-form ref="form">
         <div>
           <div>
-            <v-select v-model="inputMethod" :items="method" label="Selecionar" required></v-select>
+            <v-select v-model="inputMethod" :items="method" item-value="value" item-title="text" label="Selecionar"
+              required></v-select>
           </div>
 
           <div>
@@ -20,11 +27,14 @@
           </div>
 
           <div>
-            <v-btn class="mt-4" color="success" @click="FetchData()">Buscar</v-btn>
+            <v-btn :disabled="inputValue?.length < 3" class="mt-4" color="success" @click="FetchData()">Buscar</v-btn>
           </div>
         </div>
       </v-form>
     </v-sheet>
+    <pre v-for="typeValue, idx in method" :key="idx" :value="typeValue.value"
+      :disabled="typeValue.selected">{{ typeValue.text }}</pre>
+    <pre>{{ method }}</pre>
   </section>
   <div>
     <table class="table table-striped">
@@ -39,7 +49,7 @@
 
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 
 // function async FetchData(url){
 //   try {
@@ -49,7 +59,23 @@
 //   }
 // }
 const data = ref('');
-
+const inputMethod = ref('')
+const inputValue = ref('')
+const method = [{
+  text: 'Selecionar',
+  value: 0,
+  selected: true
+},
+{
+  text: 'Matrícula',
+  value: 'matricula',
+  selected: false
+},
+{
+  text: 'Nome',
+  value: 'nome',
+  selected: false
+}]
 
 const FetchData = async () => {
   const response = await fetch('http://pool-api.ssp.ba.intranet/rhba?matricula=30653814');
