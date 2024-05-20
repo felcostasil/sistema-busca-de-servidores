@@ -17,15 +17,16 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
-  // hooks: {
-  //   'vite:extendConfig': (config) => {
-  //     config.plugins?.push(
-  //       vuetify({
-  //         styles: { configFile: resolve('./settings.scss') },
-  //       })
-  //     )
-  //   },
-  // },
 })
 
 
+
+// hooks: {
+//   'vite:extendConfig': (config) => {
+//     config.plugins?.push(
+//       vuetify({
+//         styles: { configFile: resolve('./settings.scss') },
+//       })
+//     )
+//   },
+// },
