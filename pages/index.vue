@@ -8,21 +8,33 @@
 
     <section>
       <v-sheet class="mx-auto" max-width="500">
-        <v-form ref="form">
+        <v-form ref="formRequest">
           <div>
             <h3>{{ subtitle }}</h3>
           </div><br>
           <div>
             <div>
-              <v-select v-model="inputOption" :items="option" item-value="value" item-title="text" required></v-select>
+              <v-select v-model="inputOption" :items="option" item-value="id" item-title="title" required return-object>
+                <template v-slot:item="{ item, props }">
+                  <v-list-item v-bind="props" :subtitle="item.title" :disabled="item.raw.disabled">
+                    <template v-slot:prepend>
+                      <v-icon :icon="item.raw.icon" />
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-select>
+            </div>
+            <!-- <pre>{{ inputOption }}</pre> -->
+
+            <div v-if="inputOption.id != 0">
+              <v-text-field :rules="[(v) => onlyNumber(v), (v) => matOrName(v)]" v-model="inputValue"
+                :label="inputOption.id == 1 ? 'Digite a matrícula do servidor' : 'Digite o nome do Servidor'"
+                required></v-text-field>
             </div>
 
             <div>
-              <v-text-field v-model="inputValue" :counter="8" label="Digite" required></v-text-field>
-            </div>
-
-            <div>
-              <v-btn :disabled="inputValue?.length < 3" class="mt-4" color="success" @click="FetchData()">Buscar</v-btn>
+              <v-btn class="mt-4" color="success" @click="fetchData()">Buscar</v-btn>
+              <v-btn class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
             </div>
           </div>
         </v-form>
@@ -51,49 +63,67 @@
 </template>
 
 <script lang="ts" setup>
-
-// function async FetchData(url){
-//   try {
-//     const response = await fetch('http://pool-api.ssp.ba.intranet/rhba?matricula=30653814');
-//     const police = await response.json()
-//     console.log(police)
-//   }
-// }
+const formRequest = ref(null)
 const title = 'SISTEMA DE BUSCA DE SERVIDORES';
 const subtitle = 'Buscar Servidor por:'
 const data = ref('');
-const inputOption = ref()
+const inputOption = ref({
+  title: 'Selecionar',
+  id: 0,
+  disabled: true,
+  icon: 'mdi-magnify'
+})
 const inputValue = ref('')
-
-
-
 const option = [{
-  text: 'Selecionar',
-  value: 0,
-  selected: true,
-  disabled: true
+  title: 'Matrícula',
+  id: 1,
+  disabled: false,
+  icon: 'mdi-numeric'
 },
 {
-  text: 'Matrícula',
-  value: 'matricula',
-  selected: false
-},
-{
-  text: 'Nome',
-  value: 'nome',
-  selected: false
+  title: 'Nome',
+  id: 2,
+  disabled: false,
+  icon: 'mdi-account'
 }]
 
-// const FetchData = async () => {
-//   const response = await fetch('http://pool-api.ssp.ba.intranet/rhba?matricula=30653814');
-//   data.value = await response.json()
-//   console.log(data.value)
-// }
 
-// FetchData()
-// console.log(data.value)
+const fetchData = async () => {
+  const isValid = await formRequest.value.validate()
+  console.log(isValid)
+  if (isValid.valid) {
+    console.log(inputOption.value.title, inputValue.value)
+    return true
+  }
+  return alert('Verifique seu formulário.')
+}
+
+const clearData = () => {
+  inputValue.value = ''
+  inputOption.value = {
+    title: 'Selecionar',
+    id: 0,
+    disabled: true,
+    icon: 'mdi-magnify'
+  }
+  formRequest.value.resetValidation()
+}
 
 
-// const user = await $fetch('http://pool-api.ssp.ba.intranet/rhba?matricula=30653814');
-// console.log(user);
+const matOrName = (v) => {
+  if (inputOption.value.id == 1) {
+    if (v.length == 8) return true
+    return 'Esse campo deve ter 8 dígitos.'
+  }
+  if (v.length >= 3) return true
+  return 'Esse campo deve conter ao menos 3 dígitos'
+}
+
+const onlyNumber = (v) => {
+  if (inputOption.value.id == 1) {
+    const numbers = new RegExp('^[0-9]+$')
+    if (numbers.test(v)) return true
+    return 'Digite somente números'
+  }
+}
 </script>
