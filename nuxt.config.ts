@@ -17,6 +17,11 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
+  modules: [
+    'vue-sweetalert2/nuxt',
+  ],
+  
+  
   // hooks: {
   //   'vite:extendConfig': (config) => {
   //     config.plugins?.push(
