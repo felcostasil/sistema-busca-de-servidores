@@ -1,54 +1,53 @@
 <template>
-<v-container class="fluid">
-  <div>
-    <h1>BASE DE DADOS SERVIDOR SSP</h1>
-  </div><br>
+  <v-container class="fluid">
+    <div>
+      <v-app-bar>
+        <h1>{{ title }}</h1>
+      </v-app-bar>
+    </div><br>
 
-  <div>
-    <h3>Buscar Servidor por:</h3>
-  </div><br>
-
- 
-
-  <section>
-    <v-sheet class="mx-auto" width="500">
-      <v-form ref="form">
-        <div>
+    <section>
+      <v-sheet class="mx-auto" max-width="500">
+        <v-form ref="form">
           <div>
-            <v-select v-model="inputMethod" :items="method" item-value="value"  item-title="text" label="Selecionar"
-              required></v-select>
-          </div>
-
+            <h3>{{ subtitle }}</h3>
+          </div><br>
           <div>
-            <v-text-field v-model="inputValue" :counter="8" label="Digite" required></v-text-field>
-          </div>
+            <div>
+              <v-select v-model="inputOption" :items="option" item-value="value" item-title="text" required></v-select>
+            </div>
 
-          <div>
-            <v-btn :disabled="inputValue?.length < 3" class="mt-4" color="success" @click="FetchData()">Buscar</v-btn>
+            <div>
+              <v-text-field v-model="inputValue" :counter="8" label="Digite" required></v-text-field>
+            </div>
+
+            <div>
+              <v-btn :disabled="inputValue?.length < 3" class="mt-4" color="success" @click="FetchData()">Buscar</v-btn>
+            </div>
           </div>
-        </div>
-      </v-form>
-    </v-sheet>
-    <!-- <pre v-for="typeValue, idx in method" :key="idx" :value="typeValue.value"
+        </v-form>
+      </v-sheet>
+      <!-- <pre v-for="typeValue, idx in method" :key="idx" :value="typeValue.value"
       :disabled="typeValue.selected">{{ typeValue.text }}</pre>
     <pre>{{ method }}</pre> -->
-  </section>
-  <div>
-    <table class="table table-striped">
-      <thead>
-        <tr v-for="users, key in user">
-          <th>{{ key }}</th>
-          <td>{{ users ?? 'Não informado' }}</td>
-        </tr>
-      </thead>
-    </table>
-  </div>
+    </section>
+    <!-- <div>
+      <table class="table table-striped">
+        <thead>
+          <tr v-for="users, key in user">
+            <th>{{ key }}</th>
+            <td>{{ users ?? 'Não informado' }}</td>
+          </tr>
+        </thead>
+      </table>
+    </div> -->
   </v-container>
 
-  <footer position-fixed bottom-0>
-  Developed by CDS
-  </footer>
-
+  <v-footer class="d-flex flex-column">
+    <div class="px-4 py-1 bg-black text-center w-100">
+      <strong>Developed by CDS</strong>
+    </div>
+  </v-footer>
 </template>
 
 <script lang="ts" setup>
@@ -60,16 +59,19 @@
 //     console.log(police)
 //   }
 // }
+const title = 'SISTEMA DE BUSCA DE SERVIDORES';
+const subtitle = 'Buscar Servidor por:'
 const data = ref('');
-const inputMethod = ref('')
+const inputOption = ref()
 const inputValue = ref('')
 
 
 
-const method = [{
+const option = [{
   text: 'Selecionar',
   value: 0,
-  selected: true
+  selected: true,
+  disabled: true
 },
 {
   text: 'Matrícula',

@@ -11,9 +11,13 @@
 
 <template>
   <div>
-    <NuxtPwaAssets />
+    <!-- <NuxtPwaAssets /> -->
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
   </div>
 </template>
+
+<script>
+
+</script>
