@@ -3,7 +3,7 @@
     <div>
       <v-app-bar>
         <v-app-bar-title class="pl-5">
-          SISTEMA DE BUSCA DE SERVIDORES
+          SISTEMA DE CONSULTA DE EFETIVO
         </v-app-bar-title>
       </v-app-bar>
     </div>
@@ -28,7 +28,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" lg="6">
+              <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
                   <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => matOrName(v)]"
                     v-model="inputValue"
@@ -48,14 +48,17 @@
     </v-card>
   </v-container>
 
-  <v-footer class="d-flex flex-column">
-    <div class="px-4 py-1 bg-black text-center w-100">
-      <strong>Developed by CDS</strong>
-    </div>
-  </v-footer>
+  <div>
+    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-black text-center h-10 w-100">
+      <strong>Sistema de Consulta de Efetivo</strong>
+      <strong>Coordenação de Desenvolvimento de Sistemas</strong>
+      <strong>Fonte: RHBA</strong>
+    </v-footer>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import axios from 'axios'
 const { $toast } = useNuxtApp()
 
 const formRequest = ref(null)
@@ -78,10 +81,29 @@ const option = [{
   id: 2,
   disabled: false,
   icon: 'mdi-account'
+},
+{
+  title: 'CPF',
+  id: 3,
+  disabled: false,
+  icon: 'mdi-numeric'
 }]
+const footer = ref([
+  { text: '' },
+  { text: '' },
+  { text: 'Coordenação de Desenvolvimento de Sistemas' }
+])
+
 
 
 const fetchData = async () => {
+  try {
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon/ditto')
+
+  } catch (error) {
+    console.log(error)
+  }
+
   const isValid = await formRequest.value.validate()
   console.log(isValid)
   if (isValid.valid) {
@@ -127,3 +149,16 @@ const onlyNumber = (v) => {
   }
 }
 </script>
+
+
+<style>
+.footer-align {
+  display: flex;
+  position: fixed;
+  justify-content: space-around;
+  bottom: 0;
+  padding: 0;
+  gap: 50px;
+  width: 100%;
+}
+</style>
