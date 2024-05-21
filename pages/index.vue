@@ -31,11 +31,13 @@
               <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
                   <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => matOrName(v)]"
-                    v-model="inputValue"
-                    :label="inputOption.id == 1 ? 'Digite a matrícula do servidor' : 'Digite o nome do Servidor'"></v-text-field>
+                    v-model="inputValue" :label="textAlert"></v-text-field>
                 </div>
               </v-col>
             </v-row>
+
+            <pre>{{ inputOption.id, textAlert }}</pre>
+
 
             <v-card-actions>
               <v-btn rounded :disabled='inputOption.id == 0' class="mt-4" color="primary"
@@ -49,7 +51,7 @@
   </v-container>
 
   <div>
-    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-black text-center h-10 w-100">
+    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10">
       <strong>Sistema de Consulta de Efetivo</strong>
       <strong>Coordenação de Desenvolvimento de Sistemas</strong>
       <strong>Fonte: RHBA</strong>
@@ -86,7 +88,7 @@ const option = [{
   title: 'CPF',
   id: 3,
   disabled: false,
-  icon: 'mdi-numeric'
+  icon: 'mdi-id-card'
 }]
 const footer = ref([
   { text: '' },
@@ -94,6 +96,18 @@ const footer = ref([
   { text: 'Coordenação de Desenvolvimento de Sistemas' }
 ])
 
+const textAlert = computed(() => {
+  switch (inputOption.value.id) {
+    case 1:
+      return 'Digite a matrícula do servidor';
+    case 2:
+      return 'Digite o nome do servidor';
+    case 3:
+      return 'Digite o CPF do servidor';
+    default:
+      return '';
+  }
+})
 
 
 const fetchData = async () => {
