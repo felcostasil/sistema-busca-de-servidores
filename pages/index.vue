@@ -42,6 +42,27 @@
             </v-card-actions>
           </v-container>
         </v-form>
+        <v-table class="table table-stiped">
+          <thead>
+            <tr>
+              <th>NOME</th>
+              <th>MATRÍCULA</th>
+              <th>UNIDADE</th>
+              <th>CARGO</th>
+              <th>POSTO/GRAD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="datas in data">
+              <td>{{ datas.nomeServidor }}</td>
+              <td>{{ datas.matricula }}</td>
+              <td>{{ datas.unidade }}</td>
+              <td>{{ datas.cargo }}</td>
+              <td>{{ datas.patente ?? 'Não Informada' }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </v-table>
       </v-card-text>
     </v-card>
   </v-container>
@@ -124,7 +145,6 @@ const fetchData = async () => {
           passwd: '@&vEZpaRu^WyDf8'
         },
       })
-
       const token = response.data.token
       const result = await axios({
         method: 'get',
@@ -134,8 +154,8 @@ const fetchData = async () => {
           Authorization: `Bearer ${token}`
         }
       })
-      const police = result
-      console.log(police)
+      data.value = await result
+      console.log(data.value)
     } catch (error) {
       console.log(error)
     }
