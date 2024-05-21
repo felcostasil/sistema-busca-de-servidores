@@ -31,14 +31,10 @@
               <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
                   <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => matOrName(v)]"
-                    v-model="inputValue" :label="textAlert"></v-text-field>
+                    v-model="inputValue" :label="textLabel"></v-text-field>
                 </div>
               </v-col>
             </v-row>
-
-            <pre>{{ inputOption.id, textAlert }}</pre>
-
-
             <v-card-actions>
               <v-btn rounded :disabled='inputOption.id == 0' class="mt-4" color="primary"
                 @click="fetchData()">Buscar</v-btn>
@@ -49,7 +45,6 @@
       </v-card-text>
     </v-card>
   </v-container>
-
   <div>
     <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10">
       <strong>Sistema de Consulta de Efetivo</strong>
@@ -59,14 +54,17 @@
   </div>
 </template>
 
+
+
 <script lang="ts" setup>
 import axios from 'axios'
 const { $toast } = useNuxtApp()
 
 const formRequest = ref(null)
-const data = ref('');
+let data = ref('');
 const inputOption = ref({
   title: 'Selecionar',
+  type: 'selecionar',
   id: 0,
   disabled: true,
   icon: 'mdi-magnify'
@@ -74,18 +72,21 @@ const inputOption = ref({
 const inputValue = ref('')
 const option = [{
   title: 'Matrícula',
+  type: 'matricula',
   id: 1,
   disabled: false,
   icon: 'mdi-numeric'
 },
 {
   title: 'Nome',
+  type: 'nome',
   id: 2,
   disabled: false,
   icon: 'mdi-account'
 },
 {
   title: 'CPF',
+  type: 'value',
   id: 3,
   disabled: false,
   icon: 'mdi-id-card'
@@ -96,7 +97,7 @@ const footer = ref([
   { text: 'Coordenação de Desenvolvimento de Sistemas' }
 ])
 
-const textAlert = computed(() => {
+const textLabel = computed(() => {
   switch (inputOption.value.id) {
     case 1:
       return 'Digite a matrícula do servidor';
@@ -111,18 +112,34 @@ const textAlert = computed(() => {
 
 
 const fetchData = async () => {
-  try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon/ditto')
-
-  } catch (error) {
-    console.log(error)
-  }
-
-  const isValid = await formRequest.value.validate()
-  console.log(isValid)
+  const isValid = await formRequest.value?.validate()
   if (isValid.valid) {
-    console.log(inputOption.value.title, inputValue.value)
-    return true
+    try {
+      const loginUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/login'
+      const response = await axios({
+        method: 'post',
+        url: loginUrl,
+        data: {
+          email: 'comunicacao.efetivo.ssp@ssp.ba.gov.br',
+          passwd: '@&vEZpaRu^WyDf8'
+        },
+      })
+
+      const token = response.data.token
+      const result = await axios({
+        method: 'get',
+        url: `http://bus-api.ssp.ba.intranet:3001/sentinela/api/sspba/rhba?${inputOption.value.type}=${inputValue.value}`,
+        headers: {
+          cpf: '14452590799',
+          Authorization: `Bearer ${token}`
+        }
+      })
+      const police = result
+      console.log(police)
+    } catch (error) {
+      console.log(error)
+    }
+    return
   }
   $toast.fire(
     "Verifique seu formulário.", "", "error"
@@ -133,6 +150,7 @@ const clearData = () => {
   inputValue.value = ''
   inputOption.value = {
     title: 'Selecionar',
+    type: 'selecionar',
     id: 0,
     disabled: true,
     icon: 'mdi-magnify'
@@ -144,7 +162,6 @@ const required = (v) => {
   if (v) return true
   return 'Esse campo é obrigatório.'
 }
-
 
 const matOrName = (v) => {
   if (inputOption.value.id == 1) {
