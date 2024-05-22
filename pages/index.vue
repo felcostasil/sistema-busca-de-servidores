@@ -44,8 +44,7 @@
         </v-form>
       </v-card-text>
     </v-card>
-    <pre>{{ fullData.data }}</pre>
-    <v-table class="table table-stiped">
+    <v-table v-if="tableData.length" class="table table-stiped">
       <thead>
         <tr>
           <th>NOME</th>
@@ -56,7 +55,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="datas in fullData">
+        <tr v-for="datas in tableData">
           <td>{{ datas.nomeServidor }}</td>
           <td>{{ datas.matricula }}</td>
           <td>{{ datas.unidade }}</td>
@@ -81,8 +80,10 @@
 <script lang="ts" setup>
 import axios from 'axios'
 const { $toast } = useNuxtApp()
-
+const loginUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/login'
+const baseUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/sspba/rhba?'
 const formRequest = ref(null)
+let tableData = ref([])
 let fullData = ref({});
 const inputOption = ref({
   title: 'Selecionar',
@@ -132,12 +133,11 @@ const textLabel = computed(() => {
   }
 })
 
-
 const fetchData = async () => {
+  tableData.value = []
   const isValid = await formRequest.value?.validate()
   if (isValid.valid) {
     try {
-      const loginUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/login'
       const response = await axios({
         method: 'post',
         url: loginUrl,
@@ -149,14 +149,29 @@ const fetchData = async () => {
       const token = response.data.token
       const result = await axios({
         method: 'get',
-        url: `http://bus-api.ssp.ba.intranet:3001/sentinela/api/sspba/rhba?${inputOption.value.type}=${inputValue.value}`,
+        url: `${baseUrl}${inputOption.value.type}=${inputValue.value}`,
         headers: {
           cpf: '14452590799',
           Authorization: `Bearer ${token}`
         }
       })
-      fullData.value = await result
-      console.log(fullData.value)
+      if (inputOption.value.type == 'nome') {
+        console.log(result)
+        if (result.data.data.length > 1) {
+          return tableData.value.push(...result.data.data)
+        }
+        const res = await axios({
+          method: 'get',
+          url: `${baseUrl}${'matricula'}=${result.data.data[0].matricula}`,
+          headers: {
+            cpf: '14452590799',
+            Authorization: `Bearer ${token}`
+          }
+        })
+        fullData.value = res.data
+        return
+      }
+      return fullData.value = result.data
     } catch (error) {
       console.log(error)
     }
@@ -168,6 +183,7 @@ const fetchData = async () => {
 }
 
 const clearData = () => {
+  tableData.value = []
   inputValue.value = ''
   inputOption.value = {
     title: 'Selecionar',
