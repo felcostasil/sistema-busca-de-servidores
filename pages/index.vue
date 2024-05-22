@@ -7,7 +7,7 @@
         </v-app-bar-title>
       </v-app-bar>
     </div>
-    <v-card>
+    <v-card v-if="displayForm()">
       <v-card-title>
         Buscar Servidor
       </v-card-title>
@@ -35,15 +35,23 @@
                 </div>
               </v-col>
             </v-row>
-            <v-card-actions>
-              <v-btn rounded :disabled='inputOption.id == 0' class="mt-4" color="primary"
-                @click="fetchData()">Buscar</v-btn>
-              <v-btn :disabled="inputOption.id == 0" class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
-            </v-card-actions>
+            <v-row>
+              <v-col cols="1">
+                <v-btn :disabled='inputOption.id == 0' class="mt-4" color="primary" @click="fetchData()">Buscar</v-btn>
+              </v-col>
+              <v-col cols="1">
+                <v-btn :disabled="inputOption.id == 0" class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
+              </v-col>
+            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
     </v-card>
+    <!-- Display Single Information -->
+    <v-card-title class="d-flex justify-space-between">
+      Dados do servidor
+      <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
+    </v-card-title>
     <v-table v-if="tableData.length" class="table table-stiped">
       <thead>
         <tr>
@@ -61,19 +69,93 @@
           <td>{{ datas.unidade }}</td>
           <td>{{ datas.cargo }}</td>
           <td>{{ datas.patente ?? 'Não Informada' }}</td>
-          <td></td>
+          <td><v-btn class="mt-4">Exibir</v-btn></td>
         </tr>
       </tbody>
     </v-table>
+    <v-card v-if="fullData.nomeServidor" class="mx-auto">
+
+      <v-card-title class="d-flex justify-space-between">
+        Dados do servidor
+        <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
+      </v-card-title>
+
+      <v-card-text class="pa-5">
+        <v-row>
+          <v-col>
+            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+          </v-col>
+        </v-row><v-row>
+          <v-col>
+            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+          </v-col>
+        </v-row><v-row>
+          <v-col>
+            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+          </v-col>
+        </v-row><v-row>
+          <v-col>
+            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+
   </v-container>
   <div>
-    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10">
+    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10 mt-10">
       <strong>Sistema de Consulta de Efetivo</strong>
       <strong>Coordenação de Desenvolvimento de Sistemas</strong>
       <strong>Fonte: RHBA</strong>
     </v-footer>
   </div>
 </template>
+
+<style>
+.v-field--disabled {
+  opacity: 100% !important;
+}
+</style>
 
 
 
@@ -83,6 +165,7 @@ const { $toast } = useNuxtApp()
 const loginUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/login'
 const baseUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/sspba/rhba?'
 const formRequest = ref(null)
+let result = ref(null)
 let tableData = ref([])
 let fullData = ref({});
 const inputOption = ref({
@@ -133,8 +216,14 @@ const textLabel = computed(() => {
   }
 })
 
+const displayForm = () => {
+  if (tableData.value.length || fullData.value?.nomeServidor) {
+    return false
+  }
+  return true
+}
+
 const fetchData = async () => {
-  tableData.value = []
   const isValid = await formRequest.value?.validate()
   if (isValid.valid) {
     try {
@@ -147,7 +236,7 @@ const fetchData = async () => {
         },
       })
       const token = response.data.token
-      const result = await axios({
+      let result = await axios({
         method: 'get',
         url: `${baseUrl}${inputOption.value.type}=${inputValue.value}`,
         headers: {
@@ -156,7 +245,7 @@ const fetchData = async () => {
         }
       })
       if (inputOption.value.type == 'nome') {
-        console.log(result)
+        console.log(result.data.meta)
         if (result.data.data.length > 1) {
           return tableData.value.push(...result.data.data)
         }
@@ -184,6 +273,7 @@ const fetchData = async () => {
 
 const clearData = () => {
   tableData.value = []
+  fullData.value = {}
   inputValue.value = ''
   inputOption.value = {
     title: 'Selecionar',
@@ -193,6 +283,10 @@ const clearData = () => {
     icon: 'mdi-magnify'
   }
   formRequest.value?.resetValidation()
+}
+
+const newSearch = () => {
+  clearData()
 }
 
 const required = (v) => {
