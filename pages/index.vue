@@ -42,29 +42,30 @@
             </v-card-actions>
           </v-container>
         </v-form>
-        <v-table class="table table-stiped">
-          <thead>
-            <tr>
-              <th>NOME</th>
-              <th>MATRÍCULA</th>
-              <th>UNIDADE</th>
-              <th>CARGO</th>
-              <th>POSTO/GRAD</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="datas in data">
-              <td>{{ datas.nomeServidor }}</td>
-              <td>{{ datas.matricula }}</td>
-              <td>{{ datas.unidade }}</td>
-              <td>{{ datas.cargo }}</td>
-              <td>{{ datas.patente ?? 'Não Informada' }}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </v-table>
       </v-card-text>
     </v-card>
+    <pre>{{ fullData.data }}</pre>
+    <v-table class="table table-stiped">
+      <thead>
+        <tr>
+          <th>NOME</th>
+          <th>MATRÍCULA</th>
+          <th>UNIDADE</th>
+          <th>CARGO</th>
+          <th>POSTO/GRAD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="datas in fullData">
+          <td>{{ datas.nomeServidor }}</td>
+          <td>{{ datas.matricula }}</td>
+          <td>{{ datas.unidade }}</td>
+          <td>{{ datas.cargo }}</td>
+          <td>{{ datas.patente ?? 'Não Informada' }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </v-table>
   </v-container>
   <div>
     <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10">
@@ -82,7 +83,7 @@ import axios from 'axios'
 const { $toast } = useNuxtApp()
 
 const formRequest = ref(null)
-let data = ref('');
+let fullData = ref({});
 const inputOption = ref({
   title: 'Selecionar',
   type: 'selecionar',
@@ -107,7 +108,7 @@ const option = [{
 },
 {
   title: 'CPF',
-  type: 'value',
+  type: 'cpf',
   id: 3,
   disabled: false,
   icon: 'mdi-id-card'
@@ -154,8 +155,8 @@ const fetchData = async () => {
           Authorization: `Bearer ${token}`
         }
       })
-      data.value = await result
-      console.log(data.value)
+      fullData.value = await result
+      console.log(fullData.value)
     } catch (error) {
       console.log(error)
     }
