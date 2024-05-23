@@ -48,33 +48,35 @@
       </v-card-text>
     </v-card>
     <!-- Display Single Information -->
-    <v-card-title class="d-flex justify-space-between">
-      Dados do servidor
-      <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
-    </v-card-title>
-    <v-table v-if="tableData.length" class="table table-stiped">
-      <thead>
-        <tr>
-          <th>NOME</th>
-          <th>MATRÍCULA</th>
-          <th>UNIDADE</th>
-          <th>CARGO</th>
-          <th>POSTO/GRAD</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="datas in tableData">
-          <td>{{ datas.nomeServidor }}</td>
-          <td>{{ datas.matricula }}</td>
-          <td>{{ datas.unidade }}</td>
-          <td>{{ datas.cargo }}</td>
-          <td>{{ datas.patente ?? 'Não Informada' }}</td>
-          <td><v-btn class="mt-4">Exibir</v-btn></td>
-        </tr>
-      </tbody>
-    </v-table>
-    <v-card v-if="fullData.nomeServidor" class="mx-auto">
+    <v-card v-if="tableData.length">
+      <v-card-title class="d-flex justify-space-between">
+        Dados do servidor
+        <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
+      </v-card-title>
+      <v-table v-if="tableData.length" class="table table-stiped">
+        <thead>
+          <tr>
+            <th>NOME</th>
+            <th>MATRÍCULA</th>
+            <th>UNIDADE</th>
+            <th>CARGO</th>
+            <th>POSTO/GRAD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="datas in tableData">
+            <td>{{ datas.nomeServidor }}</td>
+            <td>{{ datas.matricula }}</td>
+            <td>{{ datas.unidade }}</td>
+            <td>{{ datas.cargo }}</td>
+            <td>{{ datas.patente ?? 'Não Informada' }}</td>
+            <td><v-btn class="mt-4">Exibir</v-btn></td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-card>
 
+    <v-card v-if="fullData.nomeServidor" class="mx-auto">
       <v-card-title class="d-flex justify-space-between">
         Dados do servidor
         <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
@@ -95,47 +97,48 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Patente" :model-value="fullData.patente" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+            <v-text-field label="Data de Admissão" :model-value="fullData.dataAdmissao" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Cargo" :model-value="fullData.cargo" variant="outlined" disabled></v-text-field>
           </v-col>
         </v-row><v-row>
           <v-col>
-            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+            <v-text-field label="Cidade" :model-value="fullData.endereco_cidade.toUpperCase()" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Logradouro" :model-value="fullData.endereco_logradouro" variant="outlined"
+              disabled></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field label="Bairro" :model-value="fullData.endereco_bairro" variant="outlined"
+              disabled></v-text-field>
           </v-col>
         </v-row><v-row>
           <v-col>
-            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+            <v-text-field label="sexo" :model-value="fullData.sexo" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+            <v-text-field label="Data de Nascimento" :model-value="fullData.dataNascimento" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+            <v-text-field label="RG" :model-value="fullData.rg" variant="outlined" disabled></v-text-field>
           </v-col>
         </v-row><v-row>
           <v-col>
-            <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Email" :model-value="fullData.email" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
-              disabled></v-text-field>
+            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Unidade" :model-value="fullData.unidade" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Celular" :model-value="fullData.celular" variant="outlined" disabled></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
