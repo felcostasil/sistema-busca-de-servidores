@@ -12,6 +12,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "axios": "^1.7.1",
+    "jwt-decode": "^4.0.0",
     "nuxt": "^3.11.2",
     "nuxt-sweetalert2": "^1.0.0",
     "sass": "^1.77.1",

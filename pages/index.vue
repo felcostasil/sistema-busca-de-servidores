@@ -47,47 +47,69 @@
         </v-form>
       </v-card-text>
     </v-card>
+
     <!-- Display Single Information -->
-    <!-- v-if="tableData.length" -->
     <v-card v-if="tableData.length">
-      <v-card-title class="d-flex justify-space-between">
-        Dados do servidor
-        <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
-      </v-card-title>
-      <v-table class="table table-stiped">
-        <thead>
-          <tr>
-            <th>NOME</th>
-            <th>MATRÍCULA</th>
-            <th>UNIDADE</th>
-            <th>CARGO</th>
-            <th>POSTO/GRAD</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="datas in tableData">
-            <td>{{ datas.nomeServidor }}</td>
-            <td>{{ datas.matricula }}</td>
-            <td>{{ datas.unidade }}</td>
-            <td>{{ datas.cargo }}</td>
-            <td>{{ datas.patente ?? 'Não Informada' }}</td>
-            <td><v-btn class="mt-4">Exibir</v-btn></td>
-          </tr>
-        </tbody>
-      </v-table>
-      <template>
+      <v-container>
+        <v-card-title class="d-flex justify-space-between">
+          Dados do servidor
+          <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
+        </v-card-title>
+        <v-card-subtitle>
+          Foram encontrados {{ pagination.total_results }} resultados.
+        </v-card-subtitle>
+        <v-table class="table table-stiped">
+          <thead>
+            <tr>
+              <th>NOME</th>
+              <th>MATRÍCULA</th>
+              <th>UNIDADE</th>
+              <th>CARGO</th>
+              <th>POSTO/GRAD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="datas in tableData">
+              <td>{{ datas.nomeServidor }}</td>
+              <td>{{ datas.matricula }}</td>
+              <td>{{ datas.unidade }}</td>
+              <td>{{ datas.cargo }}</td>
+              <td>{{ datas.patente ?? 'Não Informada' }}</td>
+              <td><v-dialog max-width="500">
+                  <template v-slot:activator="{ props: activatorProps }">
+                    <v-btn v-bind="activatorProps" color="surface-variant" text="Exibir" variant="flat"></v-btn>
+                  </template>
+
+                  <template v-slot:default="{ isActive }">
+                    <v-card title="Dialog">
+                      <v-card-text>
+                        Lorem ipsum
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn text="Fechar" @click="isActive.value = false"></v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </template>
+                </v-dialog></td>
+            </tr>
+          </tbody>
+        </v-table>
         <div class="text-center">
           <v-container>
             <v-row justify="center">
-              <v-col cols="6">
+              <v-col cols="4">
                 <v-container class="max-width">
-                  <v-pagination v-model="page" :length="15" class="my-4"></v-pagination>
+                  <v-pagination v-model="pagination.actual_page" :length="pagination.total_pages"
+                    class="my-4"></v-pagination>
                 </v-container>
               </v-col>
             </v-row>
           </v-container>
         </div>
-      </template>
+      </v-container>
     </v-card>
 
     <v-card v-if="fullData.nomeServidor" class="mx-auto">
@@ -178,13 +200,16 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
+import { jwtDecode } from "jwt-decode"
+
 const { $toast } = useNuxtApp()
-const loginUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/login'
-const baseUrl = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api/sspba/rhba?'
+const loginPath = '/login'
+const rhbaPath = '/sspba/rhba?'
+const baseURL = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api'
 const formRequest = ref(null)
-let result = ref(null)
 let tableData = ref([])
 let fullData = ref({});
+const pagination = ref({})
 const inputOption = ref({
   title: 'Selecionar',
   type: 'selecionar',
@@ -239,46 +264,84 @@ const displayForm = () => {
   }
   return true
 }
+const loginData = ref({
+  token: "",
+  exp: 0
+})
+const axiosInstance = axios.create({
+  baseURL
+})
+axiosInstance.interceptors.request.use(async function (config) {
+  if (Date.now() / 1000 > loginData.value.exp - 300) {
+    await loginBus()
+  }
+  config.headers.Authorization = `Bearer ${loginData.value.token}`
+  config.headers.cpf = '14452590799'
+  return config
+})
 
+async function loginBus() {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${baseURL}${loginPath}`,
+      data: {
+        email: 'comunicacao.efetivo.ssp@ssp.ba.gov.br',
+        passwd: '@&vEZpaRu^WyDf8'
+      },
+    })
+    const token = response?.data?.token
+    if (!token) {
+      throw "token expire timestamp does not exists"
+    }
+    loginData.value.token = token;
+    const { exp: expTimestamp } = jwtDecode(token)
+    if (!expTimestamp) {
+      throw "token expire timestamp does not exists"
+    }
+    loginData.value.exp = expTimestamp
+    loginData.value.token = token
+    return
+  } catch (_) {
+    loginData.value.exp = 0
+    loginData.value.token = ""
+  }
+}
 const fetchData = async () => {
   const isValid = await formRequest.value?.validate()
   if (isValid.valid) {
     try {
-      const response = await axios({
-        method: 'post',
-        url: loginUrl,
-        data: {
-          email: 'comunicacao.efetivo.ssp@ssp.ba.gov.br',
-          passwd: '@&vEZpaRu^WyDf8'
-        },
-      })
-      const token = response.data.token
-      let result = await axios({
+      let result = await axiosInstance({
         method: 'get',
-        url: `${baseUrl}${inputOption.value.type}=${inputValue.value}`,
-        headers: {
-          cpf: '14452590799',
-          Authorization: `Bearer ${token}`
-        }
+        url: `${rhbaPath}${inputOption.value.type}=${inputValue.value}`,
       })
+      console.log(result.data.meta)
+      // if (result.data.meta) {
+      //   if (result.data.meta.total_results == 0) {
+      //     $toast.fire(
+      //       `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
+      //     ); return
+      //   }
+      // }
+      pagination.value = result.data.meta
       if (inputOption.value.type == 'nome') {
-        console.log(result.data.meta)
         if (result.data.data.length > 1) {
           return tableData.value.push(...result.data.data)
         }
-        const res = await axios({
+        const res = await axiosInstance({
           method: 'get',
-          url: `${baseUrl}${'matricula'}=${result.data.data[0].matricula}`,
-          headers: {
-            cpf: '14452590799',
-            Authorization: `Bearer ${token}`
-          }
+          url: `${rhbaPath}${'matricula'}=${result.data.data[0].matricula}`,
         })
         fullData.value = res.data
         return
       }
       return fullData.value = result.data
     } catch (error) {
+      // if (error.response.status == 404) {
+      //   $toast.fire(
+      //     `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
+      //   );
+      // }
       console.log(error)
     }
     return
