@@ -30,7 +30,7 @@
             <v-row>
               <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
-                  <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => matOrName(v)]"
+                  <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => numOrName(v)]"
                     v-model="inputValue" :label="textLabel"></v-text-field>
                 </div>
               </v-col>
@@ -48,12 +48,13 @@
       </v-card-text>
     </v-card>
     <!-- Display Single Information -->
+    <!-- v-if="tableData.length" -->
     <v-card v-if="tableData.length">
       <v-card-title class="d-flex justify-space-between">
         Dados do servidor
         <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
       </v-card-title>
-      <v-table v-if="tableData.length" class="table table-stiped">
+      <v-table class="table table-stiped">
         <thead>
           <tr>
             <th>NOME</th>
@@ -74,6 +75,19 @@
           </tr>
         </tbody>
       </v-table>
+      <template>
+        <div class="text-center">
+          <v-container>
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-container class="max-width">
+                  <v-pagination v-model="page" :length="15" class="my-4"></v-pagination>
+                </v-container>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
+      </template>
     </v-card>
 
     <v-card v-if="fullData.nomeServidor" class="mx-auto">
@@ -297,17 +311,24 @@ const required = (v) => {
   return 'Esse campo é obrigatório.'
 }
 
-const matOrName = (v) => {
-  if (inputOption.value.id == 1) {
-    if (v.length == 8) return true
-    return 'Esse campo deve ter 8 dígitos.'
+const numOrName = (v) => {
+  switch (inputOption.value.id) {
+    case 1:
+      if (v.length == 8) return true
+      return 'Esse campo de conter 8 dígitos.'
+    case 2:
+      if (v.length >= 3) return true
+      return 'Esse campo deve conter ao menos 3 dígitos'
+    case 3:
+      if (v.length == 11) return true
+      return 'Esse campo de conter 11 dígitos.'
+    default:
+      return '';
   }
-  if (v.length >= 3) return true
-  return 'Esse campo deve conter ao menos 3 dígitos'
 }
 
 const onlyNumber = (v) => {
-  if (inputOption.value.id == 1) {
+  if (inputOption.value.id != 2) {
     const numbers = new RegExp('^[0-9]+$')
     if (numbers.test(v)) return true
     return 'Digite somente números'
