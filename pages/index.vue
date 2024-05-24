@@ -31,7 +31,7 @@
               <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
                   <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => numOrName(v)]"
-                    v-model="inputValue" :label="textLabel"></v-text-field>
+                    v-model="inputValue" :label="textLabel" @keydown.enter.prevent="fetchData()"></v-text-field>
                 </div>
               </v-col>
             </v-row>
@@ -56,7 +56,7 @@
           <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
         </v-card-title>
         <v-card-subtitle>
-          Foram encontrados {{ pagination.total_results }} resultados.
+          Foram encontrados {{ pagination.totalResults }} resultados.
         </v-card-subtitle>
         <v-table class="table table-stiped">
           <thead>
@@ -102,7 +102,7 @@
             <v-row justify="center">
               <v-col cols="4">
                 <v-container class="max-width">
-                  <v-pagination v-model="pagination.actual_page" :length="pagination.total_pages"
+                  <v-pagination v-model="pagination.actualPage" :length="pagination.totalPages"
                     class="my-4"></v-pagination>
                 </v-container>
               </v-col>
@@ -207,9 +207,13 @@ const loginPath = '/login'
 const rhbaPath = '/sspba/rhba?'
 const baseURL = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api'
 const formRequest = ref(null)
-let tableData = ref([])
-let fullData = ref({});
-const pagination = ref({})
+const tableData = ref([])
+const fullData = ref({});
+const pagination = ref({
+  actualPage: Number,
+  totalPages: Number,
+  totalResults: Number
+})
 const inputOption = ref({
   title: 'Selecionar',
   type: 'selecionar',
@@ -257,6 +261,35 @@ const textLabel = computed(() => {
       return '';
   }
 })
+
+const required = (v) => {
+  if (v) return true
+  return 'Esse campo é obrigatório.'
+}
+
+const numOrName = (v) => {
+  switch (inputOption.value.id) {
+    case 1:
+      if (v.length == 8) return true
+      return 'Esse campo de conter 8 dígitos.'
+    case 2:
+      if (v.length >= 3) return true
+      return 'Esse campo deve conter ao menos 3 dígitos'
+    case 3:
+      if (v.length == 11) return true
+      return 'Esse campo de conter 11 dígitos.'
+    default:
+      return '';
+  }
+}
+
+const onlyNumber = (v) => {
+  if (inputOption.value.id != 2) {
+    const numbers = new RegExp('^[0-9]+$')
+    if (numbers.test(v)) return true
+    return 'Digite somente números'
+  }
+}
 
 const displayForm = () => {
   if (tableData.value.length || fullData.value?.nomeServidor) {
@@ -316,13 +349,6 @@ const fetchData = async () => {
         url: `${rhbaPath}${inputOption.value.type}=${inputValue.value}`,
       })
       console.log(result.data.meta)
-      // if (result.data.meta) {
-      //   if (result.data.meta.total_results == 0) {
-      //     $toast.fire(
-      //       `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
-      //     ); return
-      //   }
-      // }
       if (inputOption.value.type == 'nome') {
         if (!result.data.data.length) {
           $toast.fire(
@@ -331,7 +357,10 @@ const fetchData = async () => {
           return
         }
         if (result.data.data.length > 1) {
-          pagination.value = result.data.meta
+          pagination.value.actualPage = result.data.meta.actual_page
+          pagination.value.totalPages = result.data.meta.total_pages
+          pagination.value.totalResults = result.data.meta.total_results
+
           return tableData.value.push(...result.data.data)
         }
         const res = await axiosInstance({
@@ -375,34 +404,6 @@ const newSearch = () => {
   clearData()
 }
 
-const required = (v) => {
-  if (v) return true
-  return 'Esse campo é obrigatório.'
-}
-
-const numOrName = (v) => {
-  switch (inputOption.value.id) {
-    case 1:
-      if (v.length == 8) return true
-      return 'Esse campo de conter 8 dígitos.'
-    case 2:
-      if (v.length >= 3) return true
-      return 'Esse campo deve conter ao menos 3 dígitos'
-    case 3:
-      if (v.length == 11) return true
-      return 'Esse campo de conter 11 dígitos.'
-    default:
-      return '';
-  }
-}
-
-const onlyNumber = (v) => {
-  if (inputOption.value.id != 2) {
-    const numbers = new RegExp('^[0-9]+$')
-    if (numbers.test(v)) return true
-    return 'Digite somente números'
-  }
-}
 </script>
 
 
