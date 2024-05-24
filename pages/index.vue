@@ -323,9 +323,15 @@ const fetchData = async () => {
       //     ); return
       //   }
       // }
-      pagination.value = result.data.meta
       if (inputOption.value.type == 'nome') {
+        if (!result.data.data.length) {
+          $toast.fire(
+            `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
+          )
+          return
+        }
         if (result.data.data.length > 1) {
+          pagination.value = result.data.meta
           return tableData.value.push(...result.data.data)
         }
         const res = await axiosInstance({
@@ -337,11 +343,11 @@ const fetchData = async () => {
       }
       return fullData.value = result.data
     } catch (error) {
-      // if (error.response.status == 404) {
-      //   $toast.fire(
-      //     `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
-      //   );
-      // }
+      if (error.response.status == 404) {
+        $toast.fire(
+          `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
+        );
+      }
       console.log(error)
     }
     return
