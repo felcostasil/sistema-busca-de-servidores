@@ -31,13 +31,14 @@
               <v-col cols="12" lg="4">
                 <div v-if="inputOption.id != 0">
                   <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => numOrName(v)]"
-                    v-model="inputValue" :label="textLabel" @keydown.enter.prevent="fetchData()"></v-text-field>
+                    v-model="inputValue" :label="textLabel" @keydown.enter.prevent="sendRequest()"></v-text-field>
                 </div>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="1">
-                <v-btn :disabled='inputOption.id == 0' class="mt-4" color="primary" @click="fetchData()">Buscar</v-btn>
+                <v-btn :disabled='inputOption.id == 0' class="mt-4" color="primary"
+                  @click="sendRequest()">Buscar</v-btn>
               </v-col>
               <v-col cols="1">
                 <v-btn :disabled="inputOption.id == 0" class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
@@ -102,7 +103,7 @@
             <v-row justify="center">
               <v-col cols="4">
                 <v-container class="max-width">
-                  <v-pagination v-model="pagination.actualPage" :length="pagination.totalPages"
+                  <v-pagination v-model="valuePagination" :length="pagination.totalPages" @click="setPage()"
                     class="my-4"></v-pagination>
                 </v-container>
               </v-col>
@@ -203,16 +204,18 @@ import axios from 'axios'
 import { jwtDecode } from "jwt-decode"
 
 const { $toast } = useNuxtApp()
+const urlPagination = ref('')
 const loginPath = '/login'
 const rhbaPath = '/sspba/rhba?'
 const baseURL = 'http://bus-api.ssp.ba.intranet:3001/sentinela/api'
+const valuePagination = ref(0)
 const formRequest = ref(null)
 const tableData = ref([])
 const fullData = ref({});
 const pagination = ref({
-  actualPage: Number,
-  totalPages: Number,
-  totalResults: Number
+  actualPage: 1,
+  totalPages: 1,
+  totalResults: 1
 })
 const inputOption = ref({
   title: 'Selecionar',
@@ -340,50 +343,63 @@ async function loginBus() {
     loginData.value.token = ""
   }
 }
-const fetchData = async () => {
+
+const sendRequest = async () => {
   const isValid = await formRequest.value?.validate()
   if (isValid.valid) {
-    try {
-      let result = await axiosInstance({
-        method: 'get',
-        url: `${rhbaPath}${inputOption.value.type}=${inputValue.value}`,
-      })
-      console.log(result.data.meta)
-      if (inputOption.value.type == 'nome') {
-        if (!result.data.data.length) {
-          $toast.fire(
-            `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
-          )
-          return
-        }
-        if (result.data.data.length > 1) {
-          pagination.value.actualPage = result.data.meta.actual_page
-          pagination.value.totalPages = result.data.meta.total_pages
-          pagination.value.totalResults = result.data.meta.total_results
+    let url = `${rhbaPath}${inputOption.value.type}=${inputValue.value}`
+    let page = 1
+    urlPagination.value = url
+    fetchData(url, page)
+  }
+}
 
-          return tableData.value.push(...result.data.data)
-        }
-        const res = await axiosInstance({
-          method: 'get',
-          url: `${rhbaPath}${'matricula'}=${result.data.data[0].matricula}`,
-        })
-        fullData.value = res.data
-        return
-      }
-      return fullData.value = result.data
-    } catch (error) {
-      if (error.response.status == 404) {
+const fetchData = async (url: String, page: Number) => {
+  // tableData.value = []
+  // fullData.value = {}
+
+  try {
+    let result = await axiosInstance({
+      method: 'get',
+      url: `${url}&pagina=${page}`,
+    })
+    if (inputOption.value.type == 'nome') {
+      if (!result.data.data.length) {
         $toast.fire(
           `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
-        );
+        )
+        return
       }
-      console.log(error)
+      if (result.data.data.length > 1) {
+        pagination.value.actualPage = result.data.meta.actual_page
+        pagination.value.totalPages = result.data.meta.total_pages
+        pagination.value.totalResults = result.data.meta.total_results
+        tableData.value = []
+        return tableData.value.push(...result.data.data)
+      }
+      const res = await axiosInstance({
+        method: 'get',
+        url: `${rhbaPath}${'matricula'}=${result.data.data[0].matricula}`,
+      })
+      fullData.value = res.data
+      return
     }
-    return
+    return fullData.value = result.data
+  } catch (error) {
+    if (error.response.status == 404) {
+      $toast.fire(
+        `Sua busca por "${inputValue.value}" não foi encontrada.`, "", "error"
+      );
+    }
+    console.log(error)
   }
-  $toast.fire(
-    "Verifique seu formulário.", "", "error"
-  );
+
+}
+
+const setPage = () => {
+  // console.log(valuePagination.value)
+  fetchData(urlPagination.value, valuePagination.value)
+  console.log(fetchData(urlPagination.value, valuePagination.value))
 }
 
 const clearData = () => {
