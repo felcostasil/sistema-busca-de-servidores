@@ -75,16 +75,82 @@
               <td>{{ datas.matricula }}</td>
               <td>{{ datas.unidade }}</td>
               <td>{{ datas.cargo }}</td>
-              <td>{{ datas.patente ?? 'Não Informada' }}</td>
-              <td><v-dialog max-width="500">
+              <td>{{ datas.patente ?? 'Não Informado' }}</td>
+              <td><v-dialog max-width="1300">
                   <template v-slot:activator="{ props: activatorProps }">
-                    <v-btn v-bind="activatorProps" color="surface-variant" text="Exibir" variant="flat"></v-btn>
+                    <v-btn :v-model="inputValue = datas.matricula" v-bind="activatorProps" color="surface-variant"
+                      text="Exibir" variant="flat"></v-btn>
                   </template>
 
                   <template v-slot:default="{ isActive }">
-                    <v-card title="Dialog">
+                    <v-card title="Informações do Servidor">
                       <v-card-text>
-                        Lorem ipsum
+                        <v-row>
+                          <v-col>
+                            <v-text-field label="Nome" :model-value="datas.nomeServidor" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Matrícula" :model-value="datas.matricula" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Unidade" :model-value="datas.unidade" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-text-field label="Patente" :model-value="datas.patente ?? 'Não informado'"
+                              variant="outlined" disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Data de Admissão" :model-value="formatDate(datas.dataAdmissao)"
+                              variant="outlined" disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Cargo" :model-value="datas.cargo ?? 'Não informado'" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                        </v-row><v-row>
+                          <v-col>
+                            <v-text-field label="Cidade" :model-value="datas.endereco_cidade.toUpperCase()"
+                              variant="outlined" disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Logradouro" :model-value="datas.endereco_logradouro" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Bairro" :model-value="datas.endereco_bairro" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                        </v-row><v-row>
+                          <v-col>
+                            <v-text-field label="sexo" :model-value="datas.sexo" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Data de Nascimento" :model-value="formatDate(datas.dataNascimento)"
+                              variant="outlined" disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="RG" :model-value="datas.rg" variant="outlined" disabled></v-text-field>
+                          </v-col>
+                        </v-row><v-row>
+                          <v-col>
+                            <v-text-field label="Email" :model-value="datas.email" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="CPF" :model-value="datas.cpf" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field label="Celular" :model-value="datas.celular" variant="outlined"
+                              disabled></v-text-field>
+                          </v-col>
+                        </v-row>
                       </v-card-text>
 
                       <v-card-actions>
@@ -137,7 +203,7 @@
             <v-text-field label="Patente" :model-value="fullData.patente" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Data de Admissão" :model-value="fullData.dataAdmissao" variant="outlined"
+            <v-text-field label="Data de Admissão" :model-value="formatDate(fullData.dataAdmissao)" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
@@ -161,8 +227,8 @@
             <v-text-field label="sexo" :model-value="fullData.sexo" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Data de Nascimento" :model-value="fullData.dataNascimento" variant="outlined"
-              disabled></v-text-field>
+            <v-text-field label="Data de Nascimento" :model-value="formatDate(fullData.dataNascimento)"
+              variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
             <v-text-field label="RG" :model-value="fullData.rg" variant="outlined" disabled></v-text-field>
@@ -202,6 +268,9 @@
 <script lang="ts" setup>
 import axios from 'axios'
 import { jwtDecode } from "jwt-decode"
+import { format } from "date-fns";
+import { formatDate } from 'typescript';
+
 
 const { $toast } = useNuxtApp()
 const urlPagination = ref('')
@@ -251,6 +320,10 @@ const footer = ref([
   { text: '' },
   { text: 'Coordenação de Desenvolvimento de Sistemas' }
 ])
+
+const formatDate = (date) => {
+  return format(new Date(date), 'dd/MM/yyyy')
+}
 
 const textLabel = computed(() => {
   switch (inputOption.value.id) {

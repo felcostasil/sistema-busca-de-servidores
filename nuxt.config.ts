@@ -9,6 +9,7 @@ const { resolve } = createResolver(import.meta.url)
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
+  modules: ['@pinia/nuxt'],
   vite: {
     define: {
       'process.env.DEBUG': false,
