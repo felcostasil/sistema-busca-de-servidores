@@ -70,7 +70,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="datas in tableData">
+            <tr v-for="datas in    tableData   ">
               <td>{{ datas.nomeServidor }}</td>
               <td>{{ datas.matricula }}</td>
               <td>{{ datas.unidade }}</td>
@@ -91,8 +91,8 @@
                               disabled></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-text-field label="Matrícula" :model-value="datas.matricula" variant="outlined"
-                              disabled></v-text-field>
+                            <v-text-field :model-value="datas.matricula" v-mask="'##.###.###'" label="Matrícula"
+                              variant="outlined" disabled></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field label="Unidade" :model-value="datas.unidade" variant="outlined"
@@ -143,11 +143,11 @@
                               disabled></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-text-field label="CPF" :model-value="datas.cpf" variant="outlined"
+                            <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'" variant="outlined"
                               disabled></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-text-field label="Celular" :model-value="datas.celular" variant="outlined"
+                            <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'" variant="outlined"
                               disabled></v-text-field>
                           </v-col>
                         </v-row>
@@ -191,7 +191,7 @@
             <v-text-field label="Nome" :model-value="fullData.nomeServidor" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Matrícula" :model-value="fullData.matricula" variant="outlined"
+            <v-text-field label="Matrícula" :model-value="fullData.matricula" v-mask="'##.###.###'" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
@@ -238,10 +238,10 @@
             <v-text-field label="Email" :model-value="fullData.email" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" disabled></v-text-field>
+            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" v-mask="'###.###.###-##'" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Celular" :model-value="fullData.celular" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Celular" :model-value="fullData.celular" v-mask="'(##) #####-####'" variant="outlined" disabled></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -249,7 +249,7 @@
 
   </v-container>
   <div>
-    <v-footer v-for="foo, idx in footer" :key="idx" class="footer-align bg-grey text-center h-10 mt-10">
+    <v-footer v-for="   foo, idx    in    footer   " :key="idx" class="footer-align bg-grey text-center h-10 mt-10">
       <strong>Sistema de Consulta de Efetivo</strong>
       <strong>Coordenação de Desenvolvimento de Sistemas</strong>
       <strong>Fonte: RHBA</strong>
@@ -269,7 +269,8 @@
 import axios from 'axios'
 import { jwtDecode } from "jwt-decode"
 import { format } from "date-fns";
-import { formatDate } from 'typescript';
+// import { formatDate } from 'typescript';
+
 
 
 const { $toast } = useNuxtApp()
@@ -322,7 +323,7 @@ const footer = ref([
 ])
 
 const formatDate = (date) => {
-  return format(new Date(date), 'dd/MM/yyyy')
+  return format(new Date(date + "T03:00"), 'dd/MM/yyyy')
 }
 
 const textLabel = computed(() => {

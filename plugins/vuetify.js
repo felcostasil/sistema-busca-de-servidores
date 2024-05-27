@@ -2,6 +2,7 @@
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import VueMask from '@devindex/vue-mask';
 
 export default defineNuxtPlugin(nuxtApp => {
   const vuetify = createVuetify({
@@ -9,6 +10,6 @@ export default defineNuxtPlugin(nuxtApp => {
     components,
     directives,
   })
-
   nuxtApp.vueApp.use(vuetify)
+  nuxtApp.vueApp.use(VueMask);
 })
