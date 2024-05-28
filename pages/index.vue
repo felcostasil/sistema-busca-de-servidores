@@ -70,7 +70,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="datas in    tableData   ">
+            <tr v-for="datas in tableData   ">
               <td>{{ datas.nomeServidor }}</td>
               <td>{{ datas.matricula }}</td>
               <td>{{ datas.unidade }}</td>
@@ -143,12 +143,12 @@
                               disabled></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'" variant="outlined"
-                              disabled></v-text-field>
+                            <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'"
+                              variant="outlined" disabled></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'" variant="outlined"
-                              disabled></v-text-field>
+                            <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'"
+                              variant="outlined" disabled></v-text-field>
                           </v-col>
                         </v-row>
                       </v-card-text>
@@ -238,10 +238,12 @@
             <v-text-field label="Email" :model-value="fullData.email" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" v-mask="'###.###.###-##'" disabled></v-text-field>
+            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" v-mask="'###.###.###-##'"
+              disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Celular" :model-value="fullData.celular" v-mask="'(##) #####-####'" variant="outlined" disabled></v-text-field>
+            <v-text-field label="Celular" :model-value="fullData.celular" v-mask="'(##) #####-####'" variant="outlined"
+              disabled></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -249,7 +251,7 @@
 
   </v-container>
   <div>
-    <v-footer v-for="   foo, idx    in    footer   " :key="idx" class="footer-align bg-grey text-center h-10 mt-10">
+    <v-footer class="footer-align bg-grey text-center h-10 mt-10">
       <strong>Sistema de Consulta de Efetivo</strong>
       <strong>Coordenação de Desenvolvimento de Sistemas</strong>
       <strong>Fonte: RHBA</strong>

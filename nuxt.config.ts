@@ -7,19 +7,32 @@ const { resolve } = createResolver(import.meta.url)
 
 
 export default defineNuxtConfig({
-  alias: {
-    '@/': resolve(__dirname, '/'),
-  },
   devtools: { enabled: true },
   css: ['vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
   modules: ['@pinia/nuxt'],
+  build: {
+    transpile: ['vuetify'],
+  },
+  alias: {
+    '@/': resolve(__dirname, '/'),
+  },
   vite: {
     define: {
       'process.env.DEBUG': false,
     },
   },
-  build: {
-    transpile: ['vuetify'],
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        // default values
+        componentName: 'NuxtLink',
+        externalRelAttribute: 'noopener noreferrer',
+        activeClass: 'router-link-active',
+        exactActiveClass: 'router-link-exact-active',
+        prefetchedClass: undefined, // can be any valid string class name
+        trailingSlash: undefined // can be 'append' or 'remove'
+      }
+    }
   },
 })
 
