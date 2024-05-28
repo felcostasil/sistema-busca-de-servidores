@@ -1,41 +1,46 @@
 <template>
-  <v-container class="fluid">
-    <div>
-      <v-app-bar>
-        <v-app-bar-title class="pl-5">
-          SISTEMA DE CONSULTA DE EFETIVO
-        </v-app-bar-title>
-      </v-app-bar>
-    </div>
-    <v-container>
-      <v-col cols="12" lg="4">
-        <v-sheet class="mx-auto">
-          <v-form ref="form">
-            <v-text-field label="Email" required></v-text-field>
+  <v-row class="d-flex fill-height jsutify-center align-center">
+    <v-col cols="12" md="5" lg="5">
 
-            <v-text-field label="Senha" required></v-text-field>
+      <v-container fluid>
+        <v-row class="ml-2">
+          <v-col cols="12">
+            <v-text class="text-h5 d-flex justify-center">
+              Login do usuário
+            </v-text>
+          </v-col>
+        </v-row>
+        <v-row class="ml-2 justify-center">
+          <v-col cols="12" lg="6">
+            <v-form ref="form">
+              <v-text-field label="Email" variant="outlined" required></v-text-field>
 
-            <div class="d-flex flex-column">
-              <v-row>
-                <v-col cols="1">
-                  <v-btn class="mt-4" color="success" max-width="200">
-                    Acessar
-                  </v-btn>
+              <v-text-field label="Senha" variant="outlined" required></v-text-field>
 
-                  <v-btn class="mt-4" color="error" max-width="200">
-                    Esqueci a senha
-                  </v-btn>
-                </v-col>
+              <v-row class="justify-center">
+                <v-btn class="mt-4 w-50" color="success">
+                  Acessar
+                </v-btn>
               </v-row>
-              <v-btn class="mt-4" color="warning" max-width="200">
-                Cadastrar
-              </v-btn>
-            </div>
-          </v-form>
-        </v-sheet>
-      </v-col>
-    </v-container>
-  </v-container>
+              <v-row class="justify-center mt-10">
+                <v-btn size="small" class="text-blue" variant="text">
+                  Esqueci a senha
+                </v-btn>
+              </v-row>
+            </v-form>
+          </v-col>
+        </v-row>
+      </v-container>
+
+    </v-col>
+    <v-col cols="12" md="5" lg="7">
+
+    </v-col>
+
+  </v-row>
+
+
+
 
   <footer>
 

@@ -7,177 +7,174 @@
         </v-app-bar-title>
       </v-app-bar>
     </div>
-    <v-card v-if="displayForm()">
-      <v-card-title>
-        Buscar Servidor
-      </v-card-title>
-      <v-card-text>
-        <v-form ref="formRequest">
-          <v-container>
-            <v-row>
-              <v-col cols="12" lg="4">
-                <v-select v-model="inputOption" :items="option" item-value="id" item-title="title" return-object>
-                  <template v-slot:item="{ item, props }">
-                    <v-list-item v-bind="props" :subtitle="item.title" :disabled="item.raw.disabled">
-                      <template v-slot:prepend>
-                        <v-icon :icon="item.raw.icon" />
-                      </template>
-                    </v-list-item>
+    <v-container v-if="displayForm()">
+      <v-row>
+        <v-col>
+          <v-text class="text-h5">
+            Buscar Servidor
+          </v-text>
+        </v-col>
+      </v-row>
+      <v-form ref="formRequest">
+        <v-row>
+          <v-col cols="12" lg="4">
+            <v-select v-model="inputOption" :items="option" item-value="id" item-title="title" return-object>
+              <template v-slot:item="{ item, props }">
+                <v-list-item v-bind="props" :subtitle="item.title" :disabled="item.raw.disabled">
+                  <template v-slot:prepend>
+                    <v-icon :icon="item.raw.icon" />
                   </template>
-                </v-select>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" lg="4">
-                <div v-if="inputOption.id != 0">
-                  <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => numOrName(v)]"
-                    v-model="inputValue" :label="textLabel" @keydown.enter.prevent="sendRequest()"></v-text-field>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="1">
-                <v-btn :disabled='inputOption.id == 0' class="mt-4" color="primary"
-                  @click="sendRequest()">Buscar</v-btn>
-              </v-col>
-              <v-col cols="1">
-                <v-btn :disabled="inputOption.id == 0" class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-form>
-      </v-card-text>
-    </v-card>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" lg="4">
+            <div v-if="inputOption.id != 0">
+              <v-text-field :rules="[(v) => required(v), (v) => onlyNumber(v), (v) => numOrName(v)]"
+                v-model="inputValue" :label="textLabel" @keydown.enter.prevent="sendRequest()"></v-text-field>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="1">
+            <v-btn :disabled='inputOption.id == 0' class="mt-4" color="primary" @click="sendRequest()">Buscar</v-btn>
+          </v-col>
+          <v-col cols="1">
+            <v-btn :disabled="inputOption.id == 0" class="mt-4" color="warning" @click="clearData()">Limpar</v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-container>
 
     <!-- Display Single Information -->
-    <v-card v-if="tableData.length">
-      <v-container>
-        <v-card-title class="d-flex justify-space-between">
-          Dados do servidor
-          <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
-        </v-card-title>
-        <v-card-subtitle>
-          Foram encontrados {{ pagination.totalResults }} resultados.
-        </v-card-subtitle>
-        <v-table class="table table-stiped">
-          <thead>
-            <tr>
-              <th>NOME</th>
-              <th>MATRÍCULA</th>
-              <th>UNIDADE</th>
-              <th>CARGO</th>
-              <th>POSTO/GRAD</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="datas in tableData   ">
-              <td>{{ datas.nomeServidor }}</td>
-              <td>{{ datas.matricula }}</td>
-              <td>{{ datas.unidade }}</td>
-              <td>{{ datas.cargo }}</td>
-              <td>{{ datas.patente ?? 'Não Informado' }}</td>
-              <td><v-dialog max-width="1300">
-                  <template v-slot:activator="{ props: activatorProps }">
-                    <v-btn :v-model="inputValue = datas.matricula" v-bind="activatorProps" color="surface-variant"
-                      text="Exibir" variant="flat"></v-btn>
-                  </template>
+    <v-container v-if="tableData.length">
+      <v-card-title class="d-flex justify-space-between">
+        Dados do servidor
+        <v-btn @click="newSearch()" color="warning">Nova Busca</v-btn>
+      </v-card-title>
+      <v-card-subtitle>
+        Foram encontrados {{ pagination.totalResults }} resultados.
+      </v-card-subtitle>
+      <v-table class="table table-stiped">
+        <thead>
+          <tr>
+            <th>NOME</th>
+            <th>MATRÍCULA</th>
+            <th>UNIDADE</th>
+            <th>CARGO</th>
+            <th>POSTO/GRAD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="datas in tableData   ">
+            <td>{{ datas.nomeServidor }}</td>
+            <td>{{ datas.matricula }}</td>
+            <td>{{ datas.unidade }}</td>
+            <td>{{ datas.cargo }}</td>
+            <td>{{ datas.patente ?? 'Não Informado' }}</td>
+            <td><v-dialog max-width="1300">
+                <template v-slot:activator="{ props: activatorProps }">
+                  <v-btn :v-model="inputValue = datas.matricula" v-bind="activatorProps" color="surface-variant"
+                    text="Exibir" variant="flat"></v-btn>
+                </template>
 
-                  <template v-slot:default="{ isActive }">
-                    <v-card title="Informações do Servidor">
-                      <v-card-text>
-                        <v-row>
-                          <v-col>
-                            <v-text-field label="Nome" :model-value="datas.nomeServidor" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field :model-value="datas.matricula" v-mask="'##.###.###'" label="Matrícula"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Unidade" :model-value="datas.unidade" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col>
-                            <v-text-field label="Patente" :model-value="datas.patente ?? 'Não informado'"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Data de Admissão" :model-value="formatDate(datas.dataAdmissao)"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Cargo" :model-value="datas.cargo ?? 'Não informado'" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                        </v-row><v-row>
-                          <v-col>
-                            <v-text-field label="Cidade" :model-value="datas.endereco_cidade.toUpperCase()"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Logradouro" :model-value="datas.endereco_logradouro" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Bairro" :model-value="datas.endereco_bairro" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                        </v-row><v-row>
-                          <v-col>
-                            <v-text-field label="sexo" :model-value="datas.sexo" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Data de Nascimento" :model-value="formatDate(datas.dataNascimento)"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="RG" :model-value="datas.rg" variant="outlined" disabled></v-text-field>
-                          </v-col>
-                        </v-row><v-row>
-                          <v-col>
-                            <v-text-field label="Email" :model-value="datas.email" variant="outlined"
-                              disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'"
-                              variant="outlined" disabled></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
+                <template v-slot:default="{ isActive }">
+                  <v-card title="Informações do Servidor">
+                    <v-card-text>
+                      <v-row>
+                        <v-col>
+                          <v-text-field label="Nome" :model-value="datas.nomeServidor" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field :model-value="datas.matricula" v-mask="'##.###.###'" label="Matrícula"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Unidade" :model-value="datas.unidade" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col>
+                          <v-text-field label="Patente" :model-value="datas.patente ?? 'Não informado'"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Data de Admissão" :model-value="formatDate(datas.dataAdmissao)"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Cargo" :model-value="datas.cargo ?? 'Não informado'" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                      </v-row><v-row>
+                        <v-col>
+                          <v-text-field label="Cidade" :model-value="datas.endereco_cidade.toUpperCase()"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Logradouro" :model-value="datas.endereco_logradouro" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Bairro" :model-value="datas.endereco_bairro" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                      </v-row><v-row>
+                        <v-col>
+                          <v-text-field label="sexo" :model-value="datas.sexo" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Data de Nascimento" :model-value="formatDate(datas.dataNascimento)"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="RG" :model-value="datas.rg" variant="outlined" disabled></v-text-field>
+                        </v-col>
+                      </v-row><v-row>
+                        <v-col>
+                          <v-text-field label="Email" :model-value="datas.email" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
 
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
 
-                        <v-btn text="Fechar" @click="isActive.value = false"></v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </template>
-                </v-dialog></td>
-            </tr>
-          </tbody>
-        </v-table>
-        <div class="text-center">
-          <v-container>
-            <v-row justify="center">
-              <v-col cols="4">
-                <v-container class="max-width">
-                  <v-pagination v-model="valuePagination" :length="pagination.totalPages" @click="setPage()"
-                    class="my-4"></v-pagination>
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-container>
-        </div>
-      </v-container>
-    </v-card>
+                      <v-btn text="Fechar" @click="isActive.value = false"></v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog></td>
+          </tr>
+        </tbody>
+      </v-table>
+      <div class="text-center">
+        <v-container>
+          <v-row justify="center">
+            <v-col cols="4">
+              <v-container class="max-width">
+                <v-pagination v-model="valuePagination" :length="pagination.totalPages" @click="setPage()"
+                  class="my-4"></v-pagination>
+              </v-container>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
+    </v-container>
 
     <v-card v-if="fullData.nomeServidor" class="mx-auto">
       <v-card-title class="d-flex justify-space-between">

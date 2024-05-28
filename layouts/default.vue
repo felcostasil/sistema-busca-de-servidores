@@ -1,14 +1,18 @@
 <template>
-  <div>
-    <VApp>
-      <VMain>
-        <slot />
-      </VMain>
-    </VApp>
-  </div>
+  <VApp class="img-default">
+    <VMain>
+      <slot />
+    </VMain>
+  </VApp>
 </template>
 
 <style>
+.img-default {
+  background-image: url('../assets/background-img.png');
+  background-size: cover;
+  height: 100%
+}
+
 .swal2-container {
   z-index: 2401;
 }
