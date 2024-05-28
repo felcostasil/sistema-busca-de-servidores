@@ -18,7 +18,8 @@
       <v-form ref="formRequest">
         <v-row>
           <v-col cols="12" lg="4">
-            <v-select v-model="inputOption" :items="option" item-value="id" item-title="title" return-object>
+            <v-select v-model="inputOption" variant="solo" :items="option" item-value="id" item-title="title"
+              return-object>
               <template v-slot:item="{ item, props }">
                 <v-list-item v-bind="props" :subtitle="item.title" :disabled="item.raw.disabled">
                   <template v-slot:prepend>
