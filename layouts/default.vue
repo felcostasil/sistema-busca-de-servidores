@@ -6,6 +6,8 @@
   </VApp>
 </template>
 
+<script setup></script>
+
 <style>
 .img-default {
   background-image: url('../assets/background-img.png');
