@@ -100,6 +100,10 @@
                       </v-row>
                       <v-row>
                         <v-col>
+                          <v-text-field label="Cargo" :model-value="datas.cargo ?? 'Não informado'" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
                           <v-text-field label="Patente" :model-value="datas.patente ?? 'Não informado'"
                             variant="outlined" disabled></v-text-field>
                         </v-col>
@@ -107,44 +111,44 @@
                           <v-text-field label="Data de Admissão" :model-value="formatDate(datas.dataAdmissao)"
                             variant="outlined" disabled></v-text-field>
                         </v-col>
-                        <v-col>
-                          <v-text-field label="Cargo" :model-value="datas.cargo ?? 'Não informado'" variant="outlined"
-                            disabled></v-text-field>
-                        </v-col>
-                      </v-row><v-row>
+                      </v-row>
+                      <v-row>
                         <v-col>
                           <v-text-field label="Cidade" :model-value="datas.endereco_cidade.toUpperCase()"
                             variant="outlined" disabled></v-text-field>
                         </v-col>
                         <v-col>
-                          <v-text-field label="Logradouro" :model-value="datas.endereco_logradouro" variant="outlined"
-                            disabled></v-text-field>
-                        </v-col>
-                        <v-col>
                           <v-text-field label="Bairro" :model-value="datas.endereco_bairro" variant="outlined"
                             disabled></v-text-field>
                         </v-col>
-                      </v-row><v-row>
                         <v-col>
-                          <v-text-field label="sexo" :model-value="datas.sexo" variant="outlined"
+                          <v-text-field label="Logradouro" :model-value="datas.endereco_logradouro" variant="outlined"
                             disabled></v-text-field>
                         </v-col>
+                      </v-row>
+                      <v-row>
                         <v-col>
-                          <v-text-field label="Data de Nascimento" :model-value="formatDate(datas.dataNascimento)"
-                            variant="outlined" disabled></v-text-field>
-                        </v-col>
-                        <v-col>
-                          <v-text-field label="RG" :model-value="datas.rg" variant="outlined" disabled></v-text-field>
-                        </v-col>
-                      </v-row><v-row>
-                        <v-col>
-                          <v-text-field label="Email" :model-value="datas.email" variant="outlined"
+                          <v-text-field label="sexo" :model-value="datas.sexo" variant="outlined"
                             disabled></v-text-field>
                         </v-col>
                         <v-col>
                           <v-text-field label="CPF" :model-value="datas.cpf" v-mask="'###.###.###-##'"
                             variant="outlined" disabled></v-text-field>
                         </v-col>
+                        <v-col>
+                          <v-text-field label="RG" :model-value="datas.rg" variant="outlined" disabled></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col>
+                          <v-text-field label="Email" :model-value="datas.email" variant="outlined"
+                            disabled></v-text-field>
+                        </v-col>
+                        <v-col>
+                          <v-text-field label="Data de Nascimento" :model-value="formatDate(datas.dataNascimento)"
+                            variant="outlined" disabled></v-text-field>
+                        </v-col>
+
                         <v-col>
                           <v-text-field label="Celular" :model-value="datas.celular" v-mask="'(##) #####-####'"
                             variant="outlined" disabled></v-text-field>
@@ -198,14 +202,14 @@
         </v-row>
         <v-row>
           <v-col>
+            <v-text-field label="Cargo" :model-value="fullData.cargo" variant="outlined" disabled></v-text-field>
+          </v-col>
+          <v-col>
             <v-text-field label="Patente" :model-value="fullData.patente" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
             <v-text-field label="Data de Admissão" :model-value="formatDate(fullData.dataAdmissao)" variant="outlined"
               disabled></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field label="Cargo" :model-value="fullData.cargo" variant="outlined" disabled></v-text-field>
           </v-col>
         </v-row><v-row>
           <v-col>
@@ -213,11 +217,11 @@
               disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Logradouro" :model-value="fullData.endereco_logradouro" variant="outlined"
+            <v-text-field label="Bairro" :model-value="fullData.endereco_bairro" variant="outlined"
               disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Bairro" :model-value="fullData.endereco_bairro" variant="outlined"
+            <v-text-field label="Logradouro" :model-value="fullData.endereco_logradouro" variant="outlined"
               disabled></v-text-field>
           </v-col>
         </v-row><v-row>
@@ -225,8 +229,8 @@
             <v-text-field label="sexo" :model-value="fullData.sexo" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Data de Nascimento" :model-value="formatDate(fullData.dataNascimento)"
-              variant="outlined" disabled></v-text-field>
+            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" v-mask="'###.###.###-##'"
+              disabled></v-text-field>
           </v-col>
           <v-col>
             <v-text-field label="RG" :model-value="fullData.rg" variant="outlined" disabled></v-text-field>
@@ -236,8 +240,8 @@
             <v-text-field label="Email" :model-value="fullData.email" variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="CPF" :model-value="fullData.cpf" variant="outlined" v-mask="'###.###.###-##'"
-              disabled></v-text-field>
+            <v-text-field label="Data de Nascimento" :model-value="formatDate(fullData.dataNascimento)"
+              variant="outlined" disabled></v-text-field>
           </v-col>
           <v-col>
             <v-text-field label="Celular" :model-value="fullData.celular" v-mask="'(##) #####-####'" variant="outlined"
